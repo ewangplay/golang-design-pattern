@@ -1,10 +1,19 @@
 package builder
 
+import (
+	"fmt"
+)
+
+type Product interface {
+	Show()
+}
+
 //Builder 是生成器接口
 type Builder interface {
-	Part1()
-	Part2()
-	Part3()
+	BuildPart1()
+	BuildPart2()
+	BuildPart3()
+	GetProduct() Product
 }
 
 type Director struct {
@@ -19,48 +28,65 @@ func NewDirector(builder Builder) *Director {
 }
 
 //Construct Product
-func (d *Director) Construct() {
-	d.builder.Part1()
-	d.builder.Part2()
-	d.builder.Part3()
+func (d *Director) Construct() Product {
+	d.builder.BuildPart1()
+	d.builder.BuildPart2()
+	d.builder.BuildPart3()
+	return d.builder.GetProduct()
 }
 
-type Builder1 struct {
+type Product1 struct {
 	result string
 }
 
-func (b *Builder1) Part1() {
-	b.result += "1"
+func (p *Product1) Show() {
+	fmt.Println(p.result)
 }
 
-func (b *Builder1) Part2() {
-	b.result += "2"
+type Builder1 struct {
+	product Product1
 }
 
-func (b *Builder1) Part3() {
-	b.result += "3"
+func (b *Builder1) BuildPart1() {
+	b.product.result += "1"
 }
 
-func (b *Builder1) GetResult() string {
-	return b.result
+func (b *Builder1) BuildPart2() {
+	b.product.result += "2"
 }
 
-type Builder2 struct {
+func (b *Builder1) BuildPart3() {
+	b.product.result += "3"
+}
+
+func (b *Builder1) GetProduct() Product {
+	return &b.product
+}
+
+type Product2 struct {
 	result int
 }
 
-func (b *Builder2) Part1() {
-	b.result += 1
+func (p *Product2) Show() {
+	fmt.Println(p.result)
 }
 
-func (b *Builder2) Part2() {
-	b.result += 2
+type Builder2 struct {
+	product Product2
 }
 
-func (b *Builder2) Part3() {
-	b.result += 3
+func (b *Builder2) BuildPart1() {
+	b.product.result += 1
 }
 
-func (b *Builder2) GetResult() int {
-	return b.result
+func (b *Builder2) BuildPart2() {
+	b.product.result += 2
+}
+
+func (b *Builder2) BuildPart3() {
+	b.product.result += 3
+}
+
+func (b *Builder2) GetProduct() Product {
+	return &b.product
 }
