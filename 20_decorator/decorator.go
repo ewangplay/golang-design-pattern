@@ -1,43 +1,30 @@
 package decorator
 
-type Component interface {
-	Calc() int
+import "log"
+
+type Calc interface {
+	Add(a, b int) int
 }
 
-type ConcreteComponent struct{}
+type ConcreteCalc struct{}
 
-func (*ConcreteComponent) Calc() int {
-	return 0
+func (*ConcreteCalc) Add(a, b int) int {
+	return a + b
 }
 
-type MulDecorator struct {
-	Component
-	num int
+type LogDecorator struct {
+	Calc
 }
 
-func WarpMulDecorator(c Component, num int) Component {
-	return &MulDecorator{
-		Component: c,
-		num:       num,
+func NewLogDecorator(c Calc) Calc {
+	return &LogDecorator{
+		Calc: c,
 	}
 }
 
-func (d *MulDecorator) Calc() int {
-	return d.Component.Calc() * d.num
-}
-
-type AddDecorator struct {
-	Component
-	num int
-}
-
-func WarpAddDecorator(c Component, num int) Component {
-	return &AddDecorator{
-		Component: c,
-		num:       num,
-	}
-}
-
-func (d *AddDecorator) Calc() int {
-	return d.Component.Calc() + d.num
+func (d *LogDecorator) Add(a, b int) int {
+	log.Printf("Before adding operation")
+	sum := d.Calc.Add(a, b)
+	log.Printf("After adding operation")
+	return sum
 }
