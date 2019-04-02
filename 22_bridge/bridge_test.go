@@ -1,29 +1,13 @@
 package bridge
 
-func ExampleCommonSMS() {
-	m := NewCommonMessage(ViaSMS())
-	m.SendMessage("have a drink?", "bob")
-	// Output:
-	// send have a drink? to bob via SMS
+import "testing"
+
+func TestSMSMessager(t *testing.T) {
+	m := NewConcreteMessager(ViaSMS())
+	m.SendMessage("have a drink?", "Bob")
 }
 
-func ExampleCommonEmail() {
-	m := NewCommonMessage(ViaEmail())
-	m.SendMessage("have a drink?", "bob")
-	// Output:
-	// send have a drink? to bob via Email
-}
-
-func ExampleUrgencySMS() {
-	m := NewUrgencyMessage(ViaSMS())
-	m.SendMessage("have a drink?", "bob")
-	// Output:
-	// send [Urgency] have a drink? to bob via SMS
-}
-
-func ExampleUrgencyEmail() {
-	m := NewUrgencyMessage(ViaEmail())
-	m.SendMessage("have a drink?", "bob")
-	// Output:
-	// send [Urgency] have a drink? to bob via Email
+func TestEmailMessager(t *testing.T) {
+	m := NewConcreteMessager(ViaEmail())
+	m.SendMessage("have a drink?", "Tom")
 }

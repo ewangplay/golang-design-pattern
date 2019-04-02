@@ -1,59 +1,45 @@
 package bridge
 
-import "fmt"
+import "log"
 
-type AbstractMessage interface {
+type Messager interface {
 	SendMessage(text, to string)
 }
 
-type MessageImplementer interface {
+type MessageChannel interface {
 	Send(text, to string)
 }
 
-type MessageSMS struct{}
+type SMS struct{}
 
-func ViaSMS() MessageImplementer {
-	return &MessageSMS{}
+func ViaSMS() MessageChannel {
+	return &SMS{}
 }
 
-func (*MessageSMS) Send(text, to string) {
-	fmt.Printf("send %s to %s via SMS", text, to)
+func (*SMS) Send(text, to string) {
+	log.Printf("SMS to %v: %v", to, text)
 }
 
-type MessageEmail struct{}
+type Email struct{}
 
-func ViaEmail() MessageImplementer {
-	return &MessageEmail{}
+func ViaEmail() MessageChannel {
+	return &Email{}
 }
 
-func (*MessageEmail) Send(text, to string) {
-	fmt.Printf("send %s to %s via Email", text, to)
+func (*Email) Send(text, to string) {
+	log.Printf("Email to %v: %v", to, text)
 }
 
-type CommonMessage struct {
-	method MessageImplementer
+type ConcreteMessager struct {
+	channel MessageChannel
 }
 
-func NewCommonMessage(method MessageImplementer) *CommonMessage {
-	return &CommonMessage{
-		method: method,
+func NewConcreteMessager(channel MessageChannel) *ConcreteMessager {
+	return &ConcreteMessager{
+		channel: channel,
 	}
 }
 
-func (m *CommonMessage) SendMessage(text, to string) {
-	m.method.Send(text, to)
-}
-
-type UrgencyMessage struct {
-	method MessageImplementer
-}
-
-func NewUrgencyMessage(method MessageImplementer) *UrgencyMessage {
-	return &UrgencyMessage{
-		method: method,
-	}
-}
-
-func (m *UrgencyMessage) SendMessage(text, to string) {
-	m.method.Send(fmt.Sprintf("[Urgency] %s", text), to)
+func (m *ConcreteMessager) SendMessage(text, to string) {
+	m.channel.Send(text, to)
 }
