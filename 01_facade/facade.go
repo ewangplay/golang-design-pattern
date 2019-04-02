@@ -1,59 +1,58 @@
 package facade
 
-import "fmt"
-
-func NewAPI() API {
-	return &apiImpl{
-		a: NewAModuleAPI(),
-		b: NewBModuleAPI(),
-	}
-}
+import "log"
 
 //API is facade interface of facade package
 type API interface {
-	Test() string
+	Test()
 }
 
 //facade implement
 type apiImpl struct {
-	a AModuleAPI
-	b BModuleAPI
+	aModule AModuleAPI
+	bModule BModuleAPI
 }
 
-func (a *apiImpl) Test() string {
-	aRet := a.a.TestA()
-	bRet := a.b.TestB()
-	return fmt.Sprintf("%s\n%s", aRet, bRet)
+func NewAPI() API {
+	return &apiImpl{
+		aModule: NewAModuleAPI(),
+		bModule: NewBModuleAPI(),
+	}
 }
+
+func (this *apiImpl) Test() {
+	this.aModule.TestA()
+	this.bModule.TestB()
+}
+
+//AModuleAPI ...
+type AModuleAPI interface {
+	TestA()
+}
+
+type aModuleImpl struct{}
 
 //NewAModuleAPI return new AModuleAPI
 func NewAModuleAPI() AModuleAPI {
 	return &aModuleImpl{}
 }
 
-//AModuleAPI ...
-type AModuleAPI interface {
-	TestA() string
+func (*aModuleImpl) TestA() {
+	log.Printf("A module running")
 }
 
-type aModuleImpl struct{}
-
-func (*aModuleImpl) TestA() string {
-	return "A module running"
+//BModuleAPI ...
+type BModuleAPI interface {
+	TestB()
 }
+
+type bModuleImpl struct{}
 
 //NewBModuleAPI return new BModuleAPI
 func NewBModuleAPI() BModuleAPI {
 	return &bModuleImpl{}
 }
 
-//BModuleAPI ...
-type BModuleAPI interface {
-	TestB() string
-}
-
-type bModuleImpl struct{}
-
-func (*bModuleImpl) TestB() string {
-	return "B module running"
+func (*bModuleImpl) TestB() {
+	log.Printf("B module running")
 }
